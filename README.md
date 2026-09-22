@@ -41,6 +41,8 @@ AGENTS.md
     review-loop
     improve-harness
     docs-gardening
+    record-outcome
+    evaluate-harness
 
 docs/
   agent/
@@ -48,6 +50,11 @@ docs/
 
 scripts/
   check-harness.py
+  eval-report.py
+
+.codex-evals/
+  README.md
+  runs.jsonl
 ```
 
 ## Install
@@ -103,6 +110,12 @@ python scripts/check-harness.py
 ```
 
 CI runs the same check on pushes and pull requests.
+
+## Evaluation loop
+
+For substantial completed work, `record-outcome` appends a compact non-sensitive record to `.codex-evals/runs.jsonl`. Run `python scripts/eval-report.py` for deterministic aggregate metrics. Periodically use the Luna `evaluate-harness` skill to analyze recurring failures, human corrections, regressions, retries, and model escalations, then turn evidence-backed recurring problems into durable improvements with `improve-harness`.
+
+The journal deliberately does not contain prompts, source code, secrets, personal data, or raw telemetry. Codex/OpenTelemetry can be used separately for detailed traces.
 
 Symphony is complementary. It can sit above a repository like this and dispatch tracker work into isolated Codex runs; this project intentionally does not duplicate Symphony's scheduling/workspace responsibilities.
 
