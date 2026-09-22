@@ -26,11 +26,11 @@ After installation:
 
 ## Model Policy
 
-The installed `.codex/config.toml` defaults the primary session and spawned agents to Luna with medium reasoning. An explicit CLI `--model` selection still wins.
+The installed `.codex/config.toml` defaults the primary session and spawned agents to Luna with high reasoning. An explicit CLI `--model` or Desktop model selection still wins.
 
 | Model | Use | Default reasoning |
 |---|---|---|
-| GPT-5.6 Luna | Requirements, exploration, implementation, tests, and normal review | Medium; high for quality-critical roles |
+| GPT-5.6 Luna | Requirements, exploration, implementation, tests, and normal review | High by default; lower it for routine work when useful |
 | GPT-5.6 Terra | Consequential architecture or unresolved disagreement after Luna | High |
 | GPT-5.6 Sol | A rare high-impact blocker Terra could not resolve | High |
 

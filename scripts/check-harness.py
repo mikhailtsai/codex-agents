@@ -55,8 +55,8 @@ if agent_config.get("default_subagent_model") != "gpt-5.6-luna":
     fail(".codex/config.toml: [agents].default_subagent_model must be gpt-5.6-luna")
 if config.get("model") != "gpt-5.6-luna":
     fail(".codex/config.toml: model must default to gpt-5.6-luna")
-if config.get("model_reasoning_effort") != "medium":
-    fail(".codex/config.toml: model_reasoning_effort must default to medium")
+if config.get("model_reasoning_effort") != "high":
+    fail(".codex/config.toml: model_reasoning_effort must default to high")
 
 required_agent_fields = {"name", "description", "model", "model_reasoning_effort", "sandbox_mode", "developer_instructions"}
 allowed_sandboxes = {"read-only", "workspace-write", "danger-full-access"}
