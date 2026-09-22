@@ -1,6 +1,7 @@
 # Codex agent workflow
 
 Use Codex itself as the runtime. This repository adds only a project-local workflow layer.
+The project config defaults the primary session and spawned agents to `gpt-5.6-luna` with medium reasoning. An explicit CLI `--model` selection may override that default; do not escalate by habit.
 
 ## Default policy
 
@@ -51,6 +52,7 @@ Parallelize independent investigation and reviews.
 ## Handoffs
 
 A delegation includes exact goal, scope, known evidence, expected output, and validation. Pass prior findings forward; do not make agents rediscover context. Distinguish evidence from inference and escalate ambiguity instead of inventing decisions.
+Ask Codex to delegate explicitly when parallel work is useful, for example: "Use `researcher` to map the affected path, then have `implementer` make the bounded change and `reviewer` inspect the diff." Keep each handoff narrow and ask for a compact summary with paths and validation results.
 
 ## Completion
 
@@ -65,6 +67,8 @@ For substantial work:
 8. for substantial work, use `record-outcome` to append a compact result to `.codex-evals/runs.jsonl`.
 
 Never claim a check ran when it did not. Reviewer PASS does not replace deterministic validation.
+
+Do not spawn agents for tiny mechanical changes or independent work that cannot benefit from parallelism. Every extra thread consumes tokens and context; prefer one focused Luna agent over a broad panel.
 
 ## Repository improvement
 

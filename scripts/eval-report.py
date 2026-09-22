@@ -1,26 +1,31 @@
 #!/usr/bin/env python3
 from collections import Counter
 from pathlib import Path
-import json, sys
+import json
+import sys
+
+try:
+    from eval_schema import validate_row
+except ImportError as error:
+    print("Eval journal FAILED")
+    print(f"- scripts/eval_schema.py: cannot import shared schema: {error}")
+    sys.exit(1)
 
 ROOT = Path(__file__).resolve().parents[1]
 PATH = ROOT / ".codex-evals/runs.jsonl"
-VALID = {"PASS","FAIL","HUMAN_CORRECTION","REGRESSION"}
-
+AGENTS_PATH = ROOT / ".codex/agents"
+allowed_agents = {path.stem for path in AGENTS_PATH.glob("*.toml")}
 rows=[]
 errors=[]
-if PATH.exists():
+if not PATH.is_file():
+    errors.append(".codex-evals/runs.jsonl: missing evaluation journal")
+else:
     for n,line in enumerate(PATH.read_text().splitlines(),1):
         if not line.strip(): continue
         try: row=json.loads(line)
         except Exception as e:
             errors.append(f"line {n}: invalid JSON: {e}"); continue
-        if row.get("outcome") not in VALID:
-            errors.append(f"line {n}: invalid outcome {row.get('outcome')!r}")
-        if not isinstance(row.get("agents",[]),list):
-            errors.append(f"line {n}: agents must be a list")
-        if not isinstance(row.get("retries",0),int) or row.get("retries",0)<0:
-            errors.append(f"line {n}: retries must be a non-negative integer")
+        errors.extend(validate_row(row, n, allowed_agents))
         rows.append(row)
 
 if errors:
@@ -41,6 +46,12 @@ print(f"Average retries: {sum(r.get('retries',0) for r in rows)/n:.2f}")
 print(f"Terra escalations: {sum(bool(r.get('terra')) for r in rows)} ({sum(bool(r.get('terra')) for r in rows)/n:.1%})")
 print(f"Sol escalations: {sum(bool(r.get('sol')) for r in rows)} ({sum(bool(r.get('sol')) for r in rows)/n:.1%})")
 print(f"Human correction flag: {sum(bool(r.get('human_correction')) for r in rows)} ({sum(bool(r.get('human_correction')) for r in rows)/n:.1%})")
+checks_passed = sum(r.get("checks", {}).get("passed", 0) for r in rows)
+checks_failed = sum(r.get("checks", {}).get("failed", 0) for r in rows)
+review_findings = sum(r.get("review_findings", 0) for r in rows)
+print(f"Checks passed: {checks_passed}")
+print(f"Checks failed: {checks_failed}")
+print(f"Review findings: {review_findings}")
 agents=Counter(a for r in rows for a in r.get("agents",[]))
 if agents:
     print("Agent usage:")
