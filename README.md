@@ -1,8 +1,8 @@
 # Codex Agents
 
-A Codex-native, **Luna-first** engineering workflow inspired by OpenAI's published Codex harness-engineering practices and Symphony's repository-owned workflow philosophy.
+A Codex-native, **Luna-first** engineering workflow inspired by OpenAI's published harness-engineering practices and Symphony's repository-owned workflow philosophy.
 
-Codex remains the agent runtime. This repository adds reusable project-local agents, repository skills, routing, knowledge maps, verification loops, and a model escalation policy.
+Codex remains the agent runtime. This repository adds project-local agents, repository skills, routing, knowledge maps, verification loops, and a model escalation policy.
 
 ## Model policy
 
@@ -13,13 +13,12 @@ Codex remains the agent runtime. This repository adds reusable project-local age
 | GPT-5.6 Sol | Very rare unresolved high-impact escalation |
 | GPT-6 Astra | Not required; explicit exceptional use only |
 
-The goal is not a huge mandatory pipeline. Cheap agents become more reliable through repository legibility, bounded roles, deterministic feedback, and selective independent review.
-
 ## Included
 
 ```text
 AGENTS.md
 .codex/
+  config.toml
   agents/
     product-analyst       Luna
     system-analyst        Luna
@@ -32,7 +31,8 @@ AGENTS.md
     security-reviewer     Luna
     architect             Terra (rare)
     oracle                Sol (very rare)
- .agents/
+
+.agents/
   skills/
     bootstrap-project
     debug
@@ -45,19 +45,22 @@ AGENTS.md
 docs/
   agent/
   exec-plans/
+
+scripts/
+  check-harness.py
 ```
 
 ## Install
 
 ```bash
 git clone https://github.com/mikhailtsai/codex-agents.git /tmp/codex-agents
-/tmp/codex-agents/install.sh /path/to/your/project
+bash /tmp/codex-agents/install.sh /path/to/your/project
 rm -rf /tmp/codex-agents
 ```
 
-The installer refuses to overwrite an existing `.codex`, `.agents`, or `AGENTS.md`. Merge deliberately when a project already has Codex configuration.
+The installer refuses to overwrite an existing `.codex`, `.agents`, or `AGENTS.md`. Merge deliberately when a project already has Codex customization.
 
-After installation, start Codex normally. For a codebase with weak agent-facing documentation, ask Codex to run the `bootstrap-project` skill once.
+After installation, open/trust the project in Codex. For a codebase with weak agent-facing documentation, run the `bootstrap-project` skill once.
 
 ## Operating model
 
@@ -66,7 +69,7 @@ User
   ↓
 Codex (Luna by default)
   ↓
-select only useful Luna specialists
+smallest useful set of Luna specialists
   ↓
 bounded implementation
   ↓
@@ -80,19 +83,29 @@ unresolved consequential architecture → Terra architect
 still unresolved high-impact blocker → Sol oracle
 ```
 
-## Principles adopted from OpenAI's agent-first engineering
+Unknown bugs use the evidence-driven `debug` workflow rather than speculative edit/retry loops.
+
+## Principles
 
 - Keep `AGENTS.md` small and use it as a map.
 - Keep repository-local knowledge as the source of truth.
-- Use progressive disclosure instead of injecting a giant manual.
+- Use progressive disclosure through repository skills.
 - Make architecture and quality constraints executable where possible.
-- Use agent-to-agent review loops.
-- Turn recurring failures into better tools, checks, documentation, and guardrails.
+- Use agent-to-agent review selectively by risk.
+- Turn recurring failures into tools, checks, documentation, observability, and guardrails.
 - Use durable execution plans for complex work.
 - Improve the environment instead of repeatedly asking a model to try harder.
 
-Symphony is complementary. It can sit above a repository like this and dispatch issue-tracker work into isolated Codex runs; this project intentionally does not duplicate Symphony's scheduler/workspace responsibilities.
+Run the deterministic self-check with:
+
+```bash
+python scripts/check-harness.py
+```
+
+CI runs the same check on pushes and pull requests.
+
+Symphony is complementary. It can sit above a repository like this and dispatch tracker work into isolated Codex runs; this project intentionally does not duplicate Symphony's scheduling/workspace responsibilities.
 
 ## Status
 
-Experimental and intentionally model-economical. Evolve it from measured failures in real projects: add durable repository improvements rather than prompt inflation.
+Experimental and intentionally model-economical. The next quality gains should come from dogfooding on real projects and encoding repeated failures as durable repository improvements rather than adding roles by default.
