@@ -2,7 +2,7 @@
 
 A Codex-native, **Luna-first** engineering workflow inspired by OpenAI's published Codex harness-engineering practices and Symphony's repository-owned workflow philosophy.
 
-Codex remains the agent runtime. This repository adds reusable project-local agents, skills, routing, knowledge maps, verification loops, and a model escalation policy.
+Codex remains the agent runtime. This repository adds reusable project-local agents, repository skills, routing, knowledge maps, verification loops, and a model escalation policy.
 
 ## Model policy
 
@@ -32,8 +32,10 @@ AGENTS.md
     security-reviewer     Luna
     architect             Terra (rare)
     oracle                Sol (very rare)
+ .agents/
   skills/
     bootstrap-project
+    debug
     plan
     verify
     review-loop
@@ -53,7 +55,7 @@ git clone https://github.com/mikhailtsai/codex-agents.git /tmp/codex-agents
 rm -rf /tmp/codex-agents
 ```
 
-The installer refuses to overwrite an existing `.codex` or `AGENTS.md`. Merge deliberately when a project already has Codex configuration.
+The installer refuses to overwrite an existing `.codex`, `.agents`, or `AGENTS.md`. Merge deliberately when a project already has Codex configuration.
 
 After installation, start Codex normally. For a codebase with weak agent-facing documentation, ask Codex to run the `bootstrap-project` skill once.
 
