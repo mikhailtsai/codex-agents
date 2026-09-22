@@ -1,6 +1,6 @@
 # Project-scoped Codex multi-agent configuration.
-# Keep the primary model user-selectable. Cheap models are pinned per role.
+# Luna is the default workforce; escalation models are explicit per agent.
 
 [agents]
-max_concurrent_threads_per_session = 4
-max_depth = 1
+max_concurrent_threads_per_session = 6
+max_depth = 2
