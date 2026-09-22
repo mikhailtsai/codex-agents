@@ -17,6 +17,7 @@ Escalation is exceptional:
 - `docs/agent/` contains only missing agent-facing maps and links.
 - `docs/exec-plans/` contains durable plans for complex work.
 - `.agents/skills/` contains reusable procedures.
+- `.codex-evals/` contains compact non-sensitive outcomes from real tasks; it is evidence for improving this workflow, not raw telemetry.
 
 Run `bootstrap-project` when architecture, workflows, validation, or product rules are not legible.
 
@@ -42,6 +43,7 @@ Use the smallest team that gives high confidence. Never run every role mechanica
 - unclear cross-system flow → add `system-analyst`
 - substantial/risky change → `verify` + selected `review-loop`
 - repeated failure or illegible environment → `improve-harness`
+- periodically or after enough real tasks → `evaluate-harness`
 - complex multi-step work → `plan`
 
 Parallelize independent investigation and reviews.
@@ -59,7 +61,8 @@ For substantial work:
 4. run risk-selected independent reviews;
 5. correct concrete findings;
 6. re-run invalidated checks/reviews;
-7. stop when evidence is clean.
+7. stop when evidence is clean;
+8. for substantial work, use `record-outcome` to append a compact result to `.codex-evals/runs.jsonl`.
 
 Never claim a check ran when it did not. Reviewer PASS does not replace deterministic validation.
 
@@ -68,3 +71,8 @@ Never claim a check ran when it did not. Reviewer PASS does not replace determin
 When the same failure recurs, do not grow this file. Improve the repository: tool, test, linter, structural check, observability, documentation, or discoverability. Prefer enforceable invariants over prompt rules.
 
 Keep this file a map, not a manual.
+
+
+## Evaluation
+
+Do not rely on agent self-confidence as evidence. Prefer deterministic checks, independent review, real user corrections, regressions, and accumulated outcomes. Periodically run `evaluate-harness`; improve recurring failure classes rather than reacting to isolated anecdotes. Never store prompts, secrets, source code, personal data, or raw telemetry in the eval journal.
