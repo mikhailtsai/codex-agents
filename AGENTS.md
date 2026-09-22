@@ -1,67 +1,73 @@
-# Codex orchestration policy
+# Codex agent workflow
 
-Use the strong primary model as a scarce lead/architect. Delegate bounded, high-volume work to GPT-5.6 Luna agents.
+Use Codex itself as the runtime. This repository only adds a project-local workflow layer.
 
-## Roles
+## Default policy
 
-- `product-analyst`: ambiguous/product requests → requirements, business rules, acceptance criteria, edge cases.
-- `system-analyst`: end-to-end workflow, state/data flow, integrations, boundaries, failure paths.
+**Luna first.** The primary session may itself be Luna. Use Luna agents for almost all analysis, implementation, testing, and review.
+
+Escalation is exceptional:
+- `architect` (Terra): consequential architecture decisions, unresolved conflicting evidence, or repeated Luna failure.
+- `oracle` (Sol): only when Terra still cannot resolve a high-impact blocker.
+- Do not use Astra as part of the normal workflow. If the user explicitly chooses Astra, treat it as a scarce escalation resource and still delegate routine work to Luna.
+
+## Map
+
+Repository knowledge should be discoverable progressively:
+- existing project docs remain authoritative;
+- `docs/agent/` contains only missing agent-facing maps and links;
+- `docs/exec-plans/` contains durable plans for complex work;
+- `.codex/skills/` contains reusable procedures.
+
+Run `bootstrap-project` when adopting this workflow in a repository whose architecture, workflows, validation, or product rules are not legible.
+
+## Luna team
+
+- `product-analyst`: requirements, business rules, acceptance criteria, edge cases.
+- `system-analyst`: end-to-end workflows, state/data flow, integrations and boundaries.
 - `researcher`: focused technical/code investigation.
-- `implementer`: well-scoped implementation.
-- `worker`: mechanical edits, commands, diagnostics, narrow fixes.
-- `test-engineer`: independent behavioral/regression testing and test improvement.
-- `reviewer`: correctness, regression, architecture, contracts.
-- `requirements-reviewer`: independent check that delivered behavior satisfies the request.
-- `security-reviewer`: on-demand security review for sensitive surfaces.
+- `implementer`: bounded implementation.
+- `worker`: mechanical edits, commands, diagnostics and narrow fixes.
+- `test-engineer`: behavioral/regression tests and validation.
+- `reviewer`: correctness, regression, contracts and architecture review.
+- `requirements-reviewer`: acceptance against the original request.
+- `security-reviewer`: only for security-sensitive changed surfaces.
 
 ## Routing
 
-Do not run every role for every task. Use the smallest team that gives high confidence.
+Use the smallest team that gives high confidence. Never run every role mechanically.
 
-- trivial/mechanical → `worker`
-- clear bug/change → `researcher` as needed → `implementer` → validation/review
-- ambiguous feature → `product-analyst`
-- cross-system/change with unclear existing flow → `system-analyst`
-- technically uncertain question → `researcher`
-- auth/payments/permissions/secrets/untrusted input/sensitive data → add `security-reviewer`
-- substantial user-facing behavior → add `requirements-reviewer`
-- risky/non-trivial behavior → add `test-engineer`
+- tiny/mechanical → direct work or `worker`
+- clear bug/change → `researcher` if needed → `implementer` → `verify`
+- ambiguous feature → add `product-analyst`
+- unclear cross-system flow → add `system-analyst`
+- substantial/risky change → `verify` + selected `review-loop`
+- repeated failure/illegible environment → `improve-harness`
+- complex multi-step work → `plan`
 
-Run independent analysis/reviews in parallel when useful.
-
-## Primary model
-
-The primary agent should spend its context and reasoning on decomposition, hard architecture/product decisions, resolving conflicting evidence, escalation, integration, and genuinely difficult implementation.
-
-Before doing large repository scans, repetitive edits, broad validation, or routine review directly, delegate them.
-
-Do not delegate tiny work when delegation costs more than doing it directly.
+Parallelize independent investigation and reviews.
 
 ## Handoffs
 
-Give subagents the exact goal, scope, known evidence, expected output, and required validation. Reuse prior findings instead of making downstream agents rediscover the same context.
+A delegation includes the exact goal, scope, known evidence, expected output, and validation. Pass prior findings forward; do not make agents rediscover context.
 
-Subagents must distinguish evidence from inference and escalate ambiguity instead of inventing decisions.
+Agents distinguish evidence from inference and escalate ambiguity instead of inventing decisions.
 
-## Completion loop
+## Completion
 
-For substantial changes:
-
-1. establish requirements and system context only where needed;
-2. implement with a bounded agent;
+For substantial work:
+1. establish only the missing requirements/system/code context;
+2. implement in bounded slices;
 3. run deterministic project checks;
-4. independently test/review the changed behavior;
-5. fix meaningful findings;
-6. re-run affected checks/reviews until clean;
-7. primary agent integrates and reports the result.
+4. run risk-selected independent reviews;
+5. correct concrete findings;
+6. re-run invalidated checks/reviews;
+7. stop when evidence is clean.
 
-A reviewer reporting PASS is evidence, not a substitute for deterministic tests when tests exist.
+Never claim a check ran when it did not. A reviewer PASS does not replace deterministic validation.
 
-## Engineering invariants
+## Repository improvement
 
-- Repository-local instructions and conventions win.
-- Minimal coherent diffs; no unrelated cleanup.
-- Never claim a command/test/build passed unless it actually ran.
-- Preserve unrelated user changes.
-- Review for real defects, not review theater.
-- Escalate after repeated failed cheap-agent attempts rather than looping wastefully.
+When the same failure recurs, do not grow this file. Improve the repository: tool, test, linter, structural check, observability, documentation, or discoverability. Prefer enforceable invariants over prompt rules.
+
+Keep this file a map, not a manual.
