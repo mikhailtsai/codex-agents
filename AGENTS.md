@@ -16,7 +16,7 @@ Escalation is exceptional:
 - Existing project docs remain authoritative.
 - `docs/agent/` contains only missing agent-facing maps and links.
 - `docs/exec-plans/` contains durable plans for complex work.
-- `.codex/skills/` contains reusable procedures.
+- `.agents/skills/` contains reusable procedures.
 
 Run `bootstrap-project` when architecture, workflows, validation, or product rules are not legible.
 
@@ -37,7 +37,7 @@ Run `bootstrap-project` when architecture, workflows, validation, or product rul
 Use the smallest team that gives high confidence. Never run every role mechanically.
 
 - tiny/mechanical → direct work or `worker`
-- clear bug/change → `researcher` if needed → `implementer` → `verify`
+- bug/failure → `debug` when root cause is unknown; otherwise `researcher` if needed → `implementer` → `verify`
 - ambiguous feature → add `product-analyst`
 - unclear cross-system flow → add `system-analyst`
 - substantial/risky change → `verify` + selected `review-loop`
