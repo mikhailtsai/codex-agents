@@ -1,0 +1,6 @@
+# Project-scoped Codex multi-agent configuration.
+# Keep the primary model user-selectable. Cheap models are pinned per role.
+
+[agents]
+max_concurrent_threads_per_session = 4
+max_depth = 1
