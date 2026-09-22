@@ -30,7 +30,7 @@ for name in sorted(agents):
         fail(f"AGENTS.md: shipped agent '{name}' is not discoverable")
 
 # Known workflow references must exist.
-for name in ["bootstrap-project","debug","plan","verify","review-loop","improve-harness"]:
+for name in ["bootstrap-project","debug","plan","verify","review-loop","improve-harness","record-outcome","evaluate-harness"]:
     if name not in skills:
         fail(f"AGENTS.md workflow requires missing skill: {name}")
 
@@ -40,6 +40,26 @@ for path in (ROOT / ".codex/agents").glob("*.toml"):
     model = data.get("model")
     if path.stem not in {"architect","oracle"} and model != "gpt-5.6-luna":
         fail(f"{path.relative_to(ROOT)}: routine role must use gpt-5.6-luna, got {model!r}")
+
+# Eval layer must exist and its journal must remain valid JSONL.
+for rel in [".codex-evals/README.md", ".codex-evals/runs.jsonl", "scripts/eval-report.py"]:
+    if not (ROOT / rel).exists():
+        fail(f"missing evaluation artifact: {rel}")
+
+import json
+journal = ROOT / ".codex-evals/runs.jsonl"
+valid_outcomes = {"PASS","FAIL","HUMAN_CORRECTION","REGRESSION"}
+if journal.exists():
+    for n, line in enumerate(journal.read_text().splitlines(), 1):
+        if not line.strip():
+            continue
+        try:
+            row = json.loads(line)
+        except Exception as e:
+            fail(f".codex-evals/runs.jsonl line {n}: invalid JSON: {e}")
+            continue
+        if row.get("outcome") not in valid_outcomes:
+            fail(f".codex-evals/runs.jsonl line {n}: invalid outcome")
 
 if errors:
     print("Harness check FAILED")
