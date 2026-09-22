@@ -1,80 +1,103 @@
-# Codex Agents Experiment
+# Codex Agents
 
-A small Codex-native experiment for getting more engineering work out of a limited ChatGPT/Codex budget.
+A Codex-native, **Luna-first** engineering workflow inspired by OpenAI's published Codex harness-engineering practices and Symphony's repository-owned workflow philosophy.
 
-The idea is simple: keep the strongest model as the primary agent for planning, architecture, difficult reasoning, and integration, while delegating bounded high-volume work to cheaper subagents.
+It does not replace Codex or implement another agent runtime. Codex remains the harness/runtime. This repository adds reusable project-local agents, skills, routing, knowledge maps, verification loops, and model escalation policy.
 
-Current default:
+## Model policy
 
-- primary agent: selected by the user (for example GPT-6 Astra)
-- researcher: GPT-5.6 Luna
-- implementer: GPT-5.6 Luna
-- reviewer: GPT-5.6 Luna
-- worker: GPT-5.6 Luna
+| Tier | Default use |
+|---|---|
+| GPT-5.6 Luna | Primary/default workforce: analysis, coding, testing, review |
+| GPT-5.6 Terra | Rare architecture/escalation |
+| GPT-5.6 Sol | Very rare unresolved high-impact escalation |
+| GPT-6 Astra | Not required by the workflow; only explicit exceptional use |
 
-This project is intentionally small. It follows Codex's native `.codex/agents/`, `.codex/config.toml`, and `AGENTS.md` mechanisms instead of adding another orchestration runtime.
+The goal is not to send every task through a huge pipeline. The goal is to make cheap agents reliable through repository legibility, bounded roles, deterministic feedback, and selective independent review.
 
-## Install into another repository
+## What is included
 
-From the target repository:
+```text
+AGENTS.md
+.codex/
+  agents/
+    product-analyst      Luna
+    system-analyst       Luna
+    researcher           Luna
+    implementer          Luna
+    worker               Luna
+    test-engineer        Luna
+    reviewer             Luna
+    requirements-reviewer Luna
+    security-reviewer    Luna
+    architect            Terra (rare)
+    oracle               Sol (very rare)
+  skills/
+    bootstrap-project
+    plan
+    verify
+    review-loop
+    improve-harness
+    docs-gardening
+
+docs/
+  agent/
+  exec-plans/
+```
+
+## Install
+
+Clone this repository and run the installer from it:
 
 ```bash
 git clone https://github.com/mikhailtsai/codex-agents.git /tmp/codex-agents
-cp -r /tmp/codex-agents/.codex .
-cp /tmp/codex-agents/AGENTS.md .
+/tmp/codex-agents/install.sh /path/to/your/project
 rm -rf /tmp/codex-agents
 ```
 
-Then start Codex normally from that repository and select the primary model you want to spend your premium budget on.
+The installer refuses to overwrite an existing `.codex` or `AGENTS.md`. Merge deliberately when a project already has Codex configuration.
 
-> The installer is deliberately project-local: the repository remains the source of truth and the behavior is reproducible for every Codex session opened in it.
+After installation, start Codex normally. For a new/existing codebase with weak agent-facing documentation, ask Codex to run the `bootstrap-project` skill once.
 
-## Workflow
-
-For substantial tasks the primary agent should coordinate rather than consume its own context on routine work:
+## Operating model
 
 ```text
 User
-  |
-Primary agent (strong model)
-  |
-  +--> researcher (Luna, read-only)
-  |       |
-  |       +--> concise evidence / plan
-  |
-  +--> implementer (Luna)
-  |       |
-  |       +--> focused code + tests
-  |
-  +--> worker (Luna)
-  |       |
-  |       +--> mechanical checks / small fixes
-  |
-  +--> reviewer (Luna, read-only)
-          |
-          +--> findings
-                  |
-                  +--> correction cycle when needed
+  ↓
+Codex (Luna is enough by default)
+  ↓
+select only useful Luna specialists
+  ↓
+bounded implementation
+  ↓
+deterministic validation
+  ↓
+risk-selected independent review
+  ↓
+PASS / correction loop
+
+unresolved consequential architecture
+  → Terra architect
+
+still unresolved high-impact blocker
+  → Sol oracle
 ```
 
-The primary agent owns decomposition, difficult decisions, escalation, and final integration. Subagents should do the expensive-volume work: repository exploration, targeted implementation, validation, and independent review.
+## Why the repository matters
 
-## Design principles
+The workflow follows the core lessons OpenAI has published from agent-first engineering:
 
-- Delegate aggressively, but only with clear bounded tasks.
-- Prefer parallel subagents for independent investigations.
-- Do not make the primary model read large parts of the repository when a researcher can map them first.
-- Do not make the primary model repeat mechanical implementation or validation that a Luna worker can perform.
-- Research and review are read-only.
-- Implementers make minimal, focused diffs and run real validation.
-- Agents escalate uncertainty instead of guessing.
-- Repository instructions and existing conventions win over generic preferences.
-- The final answer belongs to the primary agent.
+- keep `AGENTS.md` small and use it as a map;
+- keep repository-local knowledge as the source of truth;
+- use progressive disclosure instead of injecting a giant manual;
+- make architecture and quality constraints executable where possible;
+- use agent-to-agent review loops;
+- turn recurring failures into better tools, checks, documentation, and guardrails;
+- use durable execution plans for complex work;
+- optimize the environment instead of repeatedly telling the model to "try harder."
 
-## Why Luna?
-
-OpenAI describes GPT-5.6 Luna as a fast model for well-defined, repeatable, high-volume subagent tasks. That makes it a useful default for bounded exploration, implementation, and review while reserving a stronger primary model for the parts where additional reasoning matters most.
+Symphony is complementary, not duplicated here. Symphony can sit above a repository like this to dispatch issue-tracker work into isolated Codex runs.
 
 ## Status
 
-Experimental. The goal is to keep the configuration understandable, measure what actually works, and improve the orchestration rather than hiding it behind a large framework.
+Experimental and intentionally model-economical. The workflow should evolve from measured failures in real projects, with durable fixes added to the repository rather than prompt inflation.
