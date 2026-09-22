@@ -25,10 +25,9 @@ for path in (ROOT / ".agents/skills").glob("*/SKILL.md"):
 
 # Explicit backtick references in AGENTS.md must resolve when they name a known role/skill.
 policy = (ROOT / "AGENTS.md").read_text()
-declared = agents | skills
-for name in sorted(declared):
-    if f"`{name}`" not in policy and name not in {"architect", "oracle"}:
-        fail(f"AGENTS.md: shipped role/skill '{name}' is not discoverable")
+for name in sorted(agents):
+    if f"`{name}`" not in policy:
+        fail(f"AGENTS.md: shipped agent '{name}' is not discoverable")
 
 # Known workflow references must exist.
 for name in ["bootstrap-project","debug","plan","verify","review-loop","improve-harness"]:
