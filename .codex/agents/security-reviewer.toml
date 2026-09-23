@@ -1,6 +1,6 @@
 name = "security-reviewer"
 description = "On-demand security reviewer for auth, authorization, payments, secrets, untrusted input, data exposure, network boundaries, and sensitive integrations."
-model = "gpt-5.6-luna"
+model = "gpt-6-luna"
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 
