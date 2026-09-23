@@ -1,6 +1,6 @@
 # Codex Agents
 
-Codex Agents is a repository-local orchestration kit for efficient software work with OpenAI Codex. It keeps the normal path on the economical **GPT-5.6 Luna**, delegates only bounded work, and escalates to Terra or Sol only when evidence justifies the cost.
+Codex Agents is a repository-local orchestration kit for efficient software work with OpenAI Codex. It keeps the normal path on the economical **GPT-6 Luna**, delegates only bounded work, and escalates to Terra or Sol only when evidence justifies the cost.
 
 Codex remains the runtime. The kit supplies custom agents, reusable skills, repository knowledge maps, deterministic checks, review loops, and a small evaluation journal. It does not replace the project's build system, tests, documentation, or security boundary.
 
@@ -30,7 +30,7 @@ The installed `.codex/config.toml` defaults the primary session and spawned agen
 
 | Model | Use | Default reasoning |
 |---|---|---|
-| GPT-5.6 Luna | Requirements, exploration, implementation, tests, and normal review | High by default; lower it for routine work when useful |
+| GPT-6 Luna | Requirements, exploration, implementation, tests, and normal review | High by default; lower it for routine work when useful |
 | GPT-5.6 Terra | Consequential architecture or unresolved disagreement after Luna | High |
 | GPT-5.6 Sol | A rare high-impact blocker Terra could not resolve | High |
 
