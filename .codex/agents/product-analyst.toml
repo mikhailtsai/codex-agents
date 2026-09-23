@@ -1,6 +1,6 @@
 name = "product-analyst"
 description = "Product/business analyst for ambiguous features, requirements, acceptance criteria, business rules, edge cases, and scope."
-model = "gpt-5.6-luna"
+model = "gpt-6-luna"
 model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
 
