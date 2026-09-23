@@ -1,7 +1,7 @@
 # Codex agent workflow
 
 Use Codex itself as the runtime. This repository adds only a project-local workflow layer.
-The project config defaults the primary session and spawned agents to `gpt-5.6-luna` with high reasoning. An explicit CLI model or Desktop selection may override that default; do not escalate by habit.
+The project config defaults the primary session and spawned agents to `gpt-6-luna` with high reasoning. An explicit CLI model or Desktop selection may override that default; do not escalate by habit.
 
 ## Default policy
 
