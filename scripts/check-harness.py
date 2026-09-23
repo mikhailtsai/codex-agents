@@ -51,10 +51,10 @@ if agent_config.get("enabled") is not True:
     fail(".codex/config.toml: [agents].enabled must be true")
 if type(agent_config.get("max_concurrent_threads_per_session")) is not int or agent_config["max_concurrent_threads_per_session"] < 1:
     fail(".codex/config.toml: [agents].max_concurrent_threads_per_session must be a positive integer")
-if agent_config.get("default_subagent_model") != "gpt-5.6-luna":
-    fail(".codex/config.toml: [agents].default_subagent_model must be gpt-5.6-luna")
-if config.get("model") != "gpt-5.6-luna":
-    fail(".codex/config.toml: model must default to gpt-5.6-luna")
+if agent_config.get("default_subagent_model") != "gpt-6-luna":
+    fail(".codex/config.toml: [agents].default_subagent_model must be gpt-6-luna")
+if config.get("model") != "gpt-6-luna":
+    fail(".codex/config.toml: model must default to gpt-6-luna")
 if config.get("model_reasoning_effort") != "high":
     fail(".codex/config.toml: model_reasoning_effort must default to high")
 
@@ -117,8 +117,8 @@ for name in ["bootstrap-project","debug","plan","verify","review-loop","improve-
 for path in agent_paths:
     data = toml_data.get(path, {})
     model = data.get("model")
-    if path.stem not in {"architect","oracle"} and model != "gpt-5.6-luna":
-        fail(f"{path.relative_to(ROOT)}: routine role must use gpt-5.6-luna, got {model!r}")
+    if path.stem not in {"architect","oracle"} and model != "gpt-6-luna":
+        fail(f"{path.relative_to(ROOT)}: routine role must use gpt-6-luna, got {model!r}")
     if path.stem == "architect" and model != "gpt-5.6-terra":
         fail(f"{path.relative_to(ROOT)}: architect must use gpt-5.6-terra, got {model!r}")
     if path.stem == "oracle" and model != "gpt-5.6-sol":
