@@ -1,6 +1,6 @@
 name = "researcher"
 description = "Read-only investigator. Use before implementation when repository context, execution paths, constraints, or independent research must be established."
-model = "gpt-5.6-luna"
+model = "gpt-6-luna"
 model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
 
