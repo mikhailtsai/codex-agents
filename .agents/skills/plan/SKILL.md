@@ -17,7 +17,7 @@ A durable plan should contain only:
 - progress log
 
 Delegate product/system/code investigation to Luna agents where useful. Parallelize independent investigation.
-Do not use Terra unless Luna findings expose a consequential unresolved architecture decision.
-Do not use Sol unless Terra or repeated Luna attempts still cannot resolve a high-impact blocker.
+Do not use the Sol architect unless Luna findings expose a consequential unresolved architecture decision.
+Do not use the xhigh oracle unless the architect or repeated Luna attempts still cannot resolve a high-impact blocker.
 
 Update the plan as facts change. Move completed durable plans to `docs/exec-plans/completed/`.

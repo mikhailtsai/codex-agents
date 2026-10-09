@@ -188,6 +188,43 @@ class HarnessTests(unittest.TestCase):
             self.assertFalse((rollback_project / ".codex").exists())
             self.assertFalse((rollback_project / ".agents").exists())
 
+    def test_model_policy_rejects_wrong_model_or_effort(self):
+        cases = (
+            (".codex/agents/architect.toml", "gpt-6.1-sol", "gpt-5.6-terra", "expected model"),
+            (".codex/agents/oracle.toml", 'model_reasoning_effort = "xhigh"', 'model_reasoning_effort = "high"', "expected reasoning effort"),
+            (".codex/agents/worker.toml", 'model_reasoning_effort = "low"', 'model_reasoning_effort = "high"', "expected reasoning effort"),
+            (".codex/config.toml", 'default_subagent_reasoning_effort = "medium"', 'default_subagent_reasoning_effort = "high"', "default_subagent_reasoning_effort"),
+        )
+        for relative, old, new, diagnostic in cases:
+            with self.subTest(path=relative), tempfile.TemporaryDirectory() as directory:
+                target = Path(directory) / "kit"
+                shutil.copytree(ROOT, target, ignore=shutil.ignore_patterns(".git", "__pycache__"))
+                path = target / relative
+                self.assertIn(old, path.read_text())
+                path.write_text(path.read_text().replace(old, new))
+                result = subprocess.run(
+                    ["python3", str(target / "scripts/check-harness.py")],
+                    text=True, capture_output=True, check=False,
+                )
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(diagnostic, result.stdout)
+
+    def test_report_accepts_current_and_legacy_escalation_flags(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / "kit"
+            shutil.copytree(ROOT, target, ignore=shutil.ignore_patterns(".git", "__pycache__"))
+            (target / ".codex-evals/runs.jsonl").write_text(
+                '{"outcome":"PASS","agents":["architect"],"retries":0,"architect":true,"oracle":false}\n'
+                '{"outcome":"PASS","agents":["oracle"],"retries":0,"terra":false,"sol":true}\n'
+            )
+            result = subprocess.run(
+                ["python3", str(target / "scripts/eval-report.py")],
+                text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertIn("Architect escalations: 1 (50.0%)", result.stdout)
+            self.assertIn("Oracle escalations: 1 (50.0%)", result.stdout)
+
     def test_malformed_json_values_fail_cleanly(self):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)

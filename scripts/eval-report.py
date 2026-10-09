@@ -43,8 +43,11 @@ out=Counter(r["outcome"] for r in rows)
 for k in ["PASS","FAIL","HUMAN_CORRECTION","REGRESSION"]:
     print(f"{k}: {out[k]} ({out[k]/n:.1%})")
 print(f"Average retries: {sum(r.get('retries',0) for r in rows)/n:.2f}")
-print(f"Terra escalations: {sum(bool(r.get('terra')) for r in rows)} ({sum(bool(r.get('terra')) for r in rows)/n:.1%})")
-print(f"Sol escalations: {sum(bool(r.get('sol')) for r in rows)} ({sum(bool(r.get('sol')) for r in rows)/n:.1%})")
+# Read legacy model-named flags without relabeling historical records.
+architects = sum(bool(r.get("architect", r.get("terra", False))) for r in rows)
+oracles = sum(bool(r.get("oracle", r.get("sol", False))) for r in rows)
+print(f"Architect escalations: {architects} ({architects/n:.1%})")
+print(f"Oracle escalations: {oracles} ({oracles/n:.1%})")
 print(f"Human correction flag: {sum(bool(r.get('human_correction')) for r in rows)} ({sum(bool(r.get('human_correction')) for r in rows)/n:.1%})")
 checks_passed = sum(r.get("checks", {}).get("passed", 0) for r in rows)
 checks_failed = sum(r.get("checks", {}).get("failed", 0) for r in rows)

@@ -58,6 +58,9 @@ if config.get("model") != "gpt-6-luna":
 if config.get("model_reasoning_effort") != "high":
     fail(".codex/config.toml: model_reasoning_effort must default to high")
 
+if agent_config.get("default_subagent_reasoning_effort") != "medium":
+    fail(".codex/config.toml: default_subagent_reasoning_effort must default to medium")
+
 required_agent_fields = {"name", "description", "model", "model_reasoning_effort", "sandbox_mode", "developer_instructions"}
 allowed_sandboxes = {"read-only", "workspace-write", "danger-full-access"}
 seen_agent_names = set()
@@ -113,16 +116,23 @@ for name in ["bootstrap-project","debug","plan","verify","review-loop","improve-
     if name not in skills:
         fail(f"AGENTS.md workflow requires missing skill: {name}")
 
-# Model policy is intentionally enforceable: routine roles stay on Luna.
+# Enforce role-specific models and reasoning budgets, not just valid TOML.
+medium_roles = {"product-analyst", "system-analyst", "researcher"}
 for path in agent_paths:
+    if path.stem not in expected_agents:
+        continue
     data = toml_data.get(path, {})
-    model = data.get("model")
-    if path.stem not in {"architect","oracle"} and model != "gpt-6-luna":
-        fail(f"{path.relative_to(ROOT)}: routine role must use gpt-6-luna, got {model!r}")
-    if path.stem == "architect" and model != "gpt-5.6-terra":
-        fail(f"{path.relative_to(ROOT)}: architect must use gpt-5.6-terra, got {model!r}")
-    if path.stem == "oracle" and model != "gpt-5.6-sol":
-        fail(f"{path.relative_to(ROOT)}: oracle must use gpt-5.6-sol, got {model!r}")
+    escalation = path.stem in {"architect", "oracle"}
+    expected_model = "gpt-6.1-sol" if escalation else "gpt-6-luna"
+    expected_effort = (
+        "low" if path.stem == "worker" else
+        "medium" if path.stem in medium_roles else
+        "xhigh" if path.stem == "oracle" else "high"
+    )
+    if data.get("model") != expected_model:
+        fail(f"{path.relative_to(ROOT)}: expected model {expected_model!r}, got {data.get('model')!r}")
+    if data.get("model_reasoning_effort") != expected_effort:
+        fail(f"{path.relative_to(ROOT)}: expected reasoning effort {expected_effort!r}, got {data.get('model_reasoning_effort')!r}")
 
 # Eval layer must exist and its journal must remain valid JSONL.
 for rel in [

@@ -1,15 +1,16 @@
 # Codex agent workflow
 
 Use Codex itself as the runtime. This repository adds only a project-local workflow layer.
-The project config defaults the primary session and spawned agents to `gpt-6-luna` with high reasoning. An explicit CLI model or Desktop selection may override that default; do not escalate by habit.
+The primary session defaults to `gpt-6-luna` with high reasoning; unnamed subagents default to Luna with medium reasoning. Named roles use low for `worker`, medium for research/analysis, and high for implementation/tests/reviews. An explicit CLI model or Desktop selection may override that default; do not escalate by habit.
 
 ## Default policy
 
 Luna first. The primary session may itself be Luna. Use Luna agents for almost all analysis, implementation, testing, and review.
 
 Escalation is exceptional:
-- `architect` (Terra): consequential architecture decisions, conflicting evidence, or repeated Luna failure.
-- `oracle` (Sol): only when Terra still cannot resolve a high-impact blocker.
+- `architect` (GPT-6.1 Sol, high): consequential architecture decisions, conflicting evidence, or repeated Luna failure.
+- `oracle` (GPT-6.1 Sol, xhigh): only when the architect still cannot resolve a high-impact blocker.
+- The oracle increases reasoning budget on the same model; it is not a separate model tier.
 - Astra is not part of the normal workflow. If explicitly selected, keep routine work delegated to Luna.
 
 ## Map

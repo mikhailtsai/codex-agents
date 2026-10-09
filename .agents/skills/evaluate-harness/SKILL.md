@@ -14,4 +14,4 @@ description: Analyze accumulated task outcomes and deterministic metrics to find
 7. Do not optimize metrics by weakening validation or avoiding difficult tasks.
 8. Do not infer model quality from tiny samples. State sample size and uncertainty.
 
-Prefer Luna for this analysis. Terra/Sol are unnecessary unless the analysis exposes an independently consequential architecture problem.
+Prefer Luna for this analysis. Sol escalation is unnecessary unless the analysis exposes an independently consequential architecture problem.

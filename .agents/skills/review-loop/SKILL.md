@@ -16,4 +16,4 @@ Run independent reviews in parallel when possible.
 Aggregate only concrete findings. Send bounded corrections to Luna implementer/worker.
 Re-run affected deterministic checks and only the reviews invalidated by corrections.
 Stop review theater: PASS is acceptable when there are no meaningful findings.
-Escalate to Terra only for consequential unresolved disagreement or architecture; Sol only after that fails.
+Escalate to the Sol architect (high) only for consequential unresolved disagreement or architecture; use the oracle (xhigh) only after that fails.

@@ -1,6 +1,6 @@
 # Codex Agents
 
-Codex Agents is a repository-local orchestration kit for efficient software work with OpenAI Codex. It keeps the normal path on the economical **GPT-6 Luna**, delegates only bounded work, and escalates to Terra or Sol only when evidence justifies the cost.
+Codex Agents is a repository-local orchestration kit for efficient software work with OpenAI Codex. It keeps the normal path on the economical **GPT-6 Luna**, delegates only bounded work, and escalates to GPT-6.1 Sol only when evidence justifies the cost.
 
 Codex remains the runtime. The kit supplies custom agents, reusable skills, repository knowledge maps, deterministic checks, review loops, and a small evaluation journal. It does not replace the project's build system, tests, documentation, or security boundary.
 
@@ -26,15 +26,19 @@ After installation:
 
 ## Model Policy
 
-The installed `.codex/config.toml` defaults the primary session and spawned agents to Luna with high reasoning. An explicit CLI `--model` or Desktop model selection still wins.
+The installed `.codex/config.toml` defaults the primary session to Luna with high reasoning and unnamed subagents to Luna with medium reasoning. Named roles have explicit settings. An explicit CLI `--model` or Desktop model selection still wins.
 
-| Model | Use | Default reasoning |
+| Roles | Model | Reasoning |
 |---|---|---|
-| GPT-6 Luna | Requirements, exploration, implementation, tests, and normal review | High by default; lower it for routine work when useful |
-| GPT-5.6 Terra | Consequential architecture or unresolved disagreement after Luna | High |
-| GPT-5.6 Sol | A rare high-impact blocker Terra could not resolve | High |
+| `worker` | GPT-6 Luna | Low |
+| `researcher`, `product-analyst`, `system-analyst` | GPT-6 Luna | Medium |
+| `implementer`, `test-engineer`, all reviewers | GPT-6 Luna | High |
+| `architect` | GPT-6.1 Sol | High |
+| `oracle` | GPT-6.1 Sol | Xhigh |
 
-Terra and Sol are not general-purpose fallbacks. More subagents also means more tokens, so parallelize only independent work and return compact summaries rather than raw logs.
+Sol is a rare escalation after bounded Luna work leaves a consequential question unresolved. The oracle increases reasoning budget on the same model after the architect; it is not a different model tier. GPT-6 Astra can be explicitly selected for an exceptional final escalation but is not a default.
+
+More subagents means more tokens, so parallelize only independent work and return compact summaries rather than raw logs. Settings are a starting policy, not measured quality or cost guarantees; compare cost per correctly completed task, including reasoning output, retries, cache hits, and latency.
 
 ## How To Use It
 
@@ -68,8 +72,8 @@ For an unknown bug, use `debug` first. For complex work, use `plan`, keep the du
 | Security-sensitive change | Add `security-reviewer` |
 | Acceptance uncertainty | Add `requirements-reviewer` |
 | Repeated workflow failure | `evaluate-harness` -> `improve-harness` |
-| Consequential unresolved architecture | `architect` on Terra |
-| High-impact blocker after Terra | `oracle` on Sol |
+| Consequential unresolved architecture | `architect` on GPT-6.1 Sol (high) |
+| High-impact blocker after architect | `oracle` on GPT-6.1 Sol (xhigh) |
 
 ## Included
 
@@ -91,8 +95,8 @@ tests/test_harness.py             installer and harness tests
 The agents are intentionally narrow:
 
 - Luna: `product-analyst`, `system-analyst`, `researcher`, `implementer`, `worker`, `test-engineer`, `reviewer`, `requirements-reviewer`, `security-reviewer`.
-- Terra: `architect` for rare architecture escalation.
-- Sol: `oracle` for the last high-impact reasoning escalation.
+- Sol (high): `architect` for rare architecture escalation.
+- Sol (xhigh): `oracle` for the last high-impact reasoning escalation.
 
 Skills are procedures, not extra personalities: `bootstrap-project`, `debug`, `plan`, `verify`, `review-loop`, `improve-harness`, `docs-gardening`, `record-outcome`, and `evaluate-harness`.
 

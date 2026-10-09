@@ -15,7 +15,8 @@ Record:
 - retry count
 - deterministic checks passed/failed
 - meaningful review findings
-- whether Terra or Sol was used
+- whether the architect or oracle was used (`architect`/`oracle` booleans; legacy `terra`/`sol` fields remain accepted)
+- actual escalation model and effort in short notes when relevant
 - whether a human correction was required
 - short non-sensitive notes/tags when useful
 

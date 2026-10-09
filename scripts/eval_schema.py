@@ -1,7 +1,7 @@
 """Shared validation for the repository-local evaluation journal."""
 
 VALID_OUTCOMES = {"PASS", "FAIL", "HUMAN_CORRECTION", "REGRESSION"}
-BOOLEAN_FIELDS = {"terra", "sol", "human_correction"}
+BOOLEAN_FIELDS = {"terra", "sol", "architect", "oracle", "human_correction"}
 
 
 def validate_row(row, line_number, allowed_agents=None):
